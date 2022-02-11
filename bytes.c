@@ -2,7 +2,16 @@
 #include <stdlib.h>
 
 int main()
-{
+{   
+    char g = 'G';
+    char h = 'H';
+    char* ptr1 = &g;
+    printf("%c\n", *ptr1);
+    char** ptr2 = &ptr1;
+    *ptr2 = &h;
+    printf("%c\n", *ptr1);
+    
+    
     int a = 123456789;
     int b = a;
     int c;
