@@ -13,81 +13,40 @@ void arr_print( const int* a, int n){
     }
 }
 
-/*
-void fill( int* a, int size){
-    int r0 = 0;    //границы рамки
-    int r1 = size;
-    int i; // строка
-    int j; // столбец
-    int k = 1; // значние, присваиваемое элементу массива 
-    
-    while(size>0){
-        i = r0;
-        j = r0;
-        for (j; j < r1; j++){
-            a[i*MSIZE + j] = k;
-            k++;
-        }
-        j--;
-        i++;
-        for (i; i < r1; i++){
-            a[i*MSIZE + j] = k;
-            k++;
-        }
-        j--;
-        i--;
-        for (j; j >= r0 ; j--){
-            a[i*MSIZE + j] = k;
-            k++;
-        }
-        j++;
-        i--;
-        for (i; i >= r0+1; i--){
-            a[i*MSIZE + j] = k;
-            k++;
-        }
-        
-        r0++;
-        r1--;
-        size-=2;
-    }
-}
-*/
-
 void fill( int (*a)[MSIZE], int size){
-    int r0 = 0;    //границы рамки
+    int r0 = 0;                                // границы рамки
     int r1 = size;
-    int i; // строка
-    int j; // столбец
-    int k = 1; // значние, присваиваемое элементу массива 
+    int i;                                     // строка
+    int j;                                     // столбец
+    int k = 1;                                 // значние, присваиваемое элементу массива 
     
     while(size>0){
-        i = r0;
+        i = r0;                                // верх рамки
         j = r0;
         for (j; j < r1; j++){
             a[i][j] = k;
             k++;
         }
-        j--;
+        j--;                                   // правый бок рамки
         i++;
         for (i; i < r1; i++){
             a[i][j] = k;
             k++;
         }
-        j--;
+        j--;                                   // низ рамки
         i--;
         for (j; j >= r0 ; j--){
             a[i][j] = k;
             k++;
         }
-        j++;
+        j++;                                   // левый бок рамки
         i--;
         for (i; i >= r0+1; i--){
             a[i][j] = k;
             k++;
         }
         
-        r0++;
+        r0++;                                  // уменьшаем рамку
         r1--;
         size-=2;
     }
@@ -102,32 +61,32 @@ int main(){
     
     //заполняем матрицу по "рамкам"
     int size = n;
-    int r0 = 0;    //границы рамки
+    int r0 = 0;                                //границы рамки
     int r1 = size;
-    int i; // строка
-    int j; // столбец
-    int k = 1; // значние, присваиваемое элементу массива 
+    int i;                                     // строка
+    int j;                                     // столбец
+    int k = 1;                                 // значние, присваиваемое элементу массива 
     
     while(size>0){
-        i = r0;
+        i = r0;                                // верх рамки
         j = r0;
         for (j; j < r1; j++){
             a[i][j] = k;
             k++;
         }
-        j--;
+        j--;                                   // правый бок рамки
         i++;
         for (i; i < r1; i++){
             a[i][j] = k;
             k++;
         }
-        j--;
+        j--;                                   // низ рамки
         i--;
         for (j; j >= r0 ; j--){
             a[i][j] = k;
             k++;
         }
-        j++;
+        j++;                                   // левый бок рамки
         i--;
         for (i; i >= r0+1; i--){
             a[i][j] = k;
@@ -138,11 +97,11 @@ int main(){
         r1--;
         size-=2;
     }
-    
+    printf("Filling in main()\n");
     arr_print(a,n);
     
-    fill(a, n); 
-    
-    arr_print(a,n);
+    fill(a, n-1); //на единицу меньше размер, для проверки
+    printf("Filling in fill()\n");
+    arr_print(a,n-1);
 
 }
