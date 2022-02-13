@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stddef.h>
-#include <stdlib.h>
-#include <stdbool.h>
+#include <string.h>
 #define ARRSZ 10
 #define STRSZ 16
 
@@ -11,31 +10,17 @@ typedef struct {
     char number[STRSZ];
 } Card;
 
-bool my_str_cmp(char* a, char* b) {
-    size_t i;
-    for (i = 0; i < STRSZ; i++) {
-        if (a[i] != b[i]) {
-            return false;
-        }
+void read_field(char* field) {
+    int i;
+    char buf;
+    for (i = 0; i < STRSZ - 1; i++) {
+        buf = fgetc(stdin);
+        if (buf == '\n') { break; }
+        field[i] = buf;
     }
-    return true;
+    field[i] = '\0';
+    if (buf != '\n') { while (fgetc(stdin) != '\n') {} }
 }
-
-void free_card(Card* current) {
-    size_t i;
-    size_t sz = sizeof(Card);
-    for (i = 0; i < sz; i++) {
-        ((char*) current) [i] = 0;
-    }
-}
-
-void init_list(Card* list) {
-    size_t i;
-    for (i = 0; i < ARRSZ; i++) {
-        free_card(list + i);
-    }
-}
-
 
 void add_person(Card* list, size_t* szptr) {
     if (*szptr == ARRSZ) {
@@ -43,14 +28,11 @@ void add_person(Card* list, size_t* szptr) {
         return;
     }
     printf("print name, %d charachters max\n", STRSZ - 1);
-    fgets(list[*szptr].name, STRSZ, stdin);
-    // while (fgetc(stdin)!='\n') {}
+    read_field(list[*szptr].name);
     printf("print surname, %d charachters max\n", STRSZ - 1);
-    fgets(list[*szptr].surname, STRSZ, stdin);
-    // while (fgetc(stdin)!='\n') {}
+    read_field(list[*szptr].surname);
     printf("print number, %d charachters max\n", STRSZ - 1);
-    fgets(list[*szptr].number, STRSZ, stdin);
-    // while (fgetc(stdin)!='\n') {}
+    read_field(list[*szptr].number);
     *szptr += 1;
 }
 
@@ -67,10 +49,9 @@ Card* find_person(Card* list, size_t size) {
     switch (selector) {
     case 1:
         printf("print name, %d charachters max\n", STRSZ - 1);
-        fgets(buf, STRSZ, stdin);
-        // while (fgetc(stdin)!='\n') {}
+        read_field(buf);
         for (i = 0; i < size; i++) {
-            if (my_str_cmp(list[i].name, buf)) {
+            if (strcmp(list[i].name, buf) == 0) {
                 return list + i;
             }
         }
@@ -78,10 +59,9 @@ Card* find_person(Card* list, size_t size) {
         return NULL;
     case 2:
         printf("print surname, %d charachters max\n", STRSZ - 1);
-        fgets(buf, STRSZ, stdin);
-        // while (fgetc(stdin)!='\n') {}
+        read_field(buf);
         for (i = 0; i < size; i++) {
-            if (my_str_cmp(list[i].surname, buf)) {
+            if (strcmp(list[i].surname, buf) == 0) {
                 return list + i;
             }
         }
@@ -89,10 +69,9 @@ Card* find_person(Card* list, size_t size) {
         return NULL;
     case 3:
         printf("print number, %d charachters max\n", STRSZ - 1);
-        fgets(buf, STRSZ, stdin);
-        // while (fgetc(stdin)!='\n') {}
+        read_field(buf);
         for (i = 0; i < size; i++) {
-            if (my_str_cmp(list[i].number, buf)) {
+            if (strcmp(list[i].number, buf) == 0) {
                 return list + i;
             }
         }
@@ -117,36 +96,18 @@ void edit_person(Card* current) {
     switch (selector) {
     case 1:
         printf("print name, %d charachters max\n", STRSZ - 1);
-        fgets(buf, STRSZ, stdin);
-        // while (fgetc(stdin)!='\n') {}
-        for (i = 0; i < STRSZ; i++) {
-            (current->name) [i] = 0;
-        }
-        for (i = 0; i < STRSZ; i++) {
-            (current->name) [i] = buf[i];
-        }
+        read_field(buf);
+        strcpy(current->name, buf);
         return;
     case 2:
         printf("print surname, %d charachters max\n", STRSZ - 1);
-        fgets(buf, STRSZ, stdin);
-        // while (fgetc(stdin)!='\n') {}
-        for (i = 0; i < STRSZ; i++) {
-            (current->surname) [i] = 0;
-        }
-        for (i = 0; i < STRSZ; i++) {
-            (current->surname) [i] = buf[i];
-        }
+        read_field(buf);
+        strcpy(current->surname, buf);
         return;
     case 3:
         printf("print number, %d charachters max\n", STRSZ - 1);
-        fgets(buf, STRSZ, stdin);
-        // while (fgetc(stdin)!='\n') {}
-        for (i = 0; i < STRSZ; i++) {
-            (current->number) [i] = 0;
-        }
-        for (i = 0; i < STRSZ; i++) {
-            (current->number) [i] = buf[i];
-        }
+        read_field(buf);
+        strcpy(current->number, buf);
         return;
     default:
         printf("wrong value\n");
@@ -160,37 +121,48 @@ void delete_person(Card* current, Card* list, size_t* szptr) {
         list[i - 1] = list[i];
     }
     *szptr -= 1;
-    free_card(list + *szptr);
 }
 
 void view_person(Card* current) {
+    printf("\n");
     fputs(current->name, stdout);
-    // printf("\n");
+    printf("\n");
     fputs(current->surname, stdout);
-    // printf("\n");
+    printf("\n");
     fputs(current->number, stdout);
-    // printf("\n");
+    printf("\n\n");
 }
 
 void view_list(Card* list, size_t size) {
     size_t i;
     for (i = 0; i < size; i++) {
         view_person(list + i);
-        printf("\n");
     }
 }
 
 void demo_fill(Card* list, size_t *size) {
-    // размер списка не меньше 3!
-    Card vasya = { .name = {'v', 'a', 's', 'y', 'a', '\n'}, .surname = {'p', 'u', 'p', 'k', 'i', 'n', '\n'}, .number = {'1', '2', '3', '4', '\n'}};
+    // размер списка (arrsz) не меньше 3!
+    Card vasya = {
+        .name = {'v', 'a', 's', 'y', 'a', '\0'},
+        .surname = {'p', 'u', 'p', 'k', 'i', 'n', '\0'},
+        .number = {'1', '2', '3', '4', '\0'}
+        };
     *list = vasya;
     *size += 1;
     list++;
-    Card petya = { .name = {'p', 'e', 't', 'y', 'a', '\n'}, .surname = {'g', 'u', 'b', 'k', 'i', 'n', '\n'}, .number = {'4', '3', '2', '1', '\n'}};
+    Card petya = {
+        .name = {'p', 'e', 't', 'y', 'a', '\0'},
+        .surname = {'g', 'u', 'b', 'k', 'i', 'n', '\0'},
+        .number = {'4', '3', '2', '1', '\0'}
+        };
     *list = petya;
     *size += 1;
     list++;
-    Card vova = { .name = {'v', 'o', 'v', 'a', '\n'}, .surname = {'d', 'u', 'd', 'k', 'i', 'n', '\n'}, .number = {'1', '1', '1', '1', '\n'}};
+    Card vova = {
+        .name = {'v', 'o', 'v', 'a', '\0'},
+        .surname = {'d', 'u', 'd', 'k', 'i', 'n', '\0'},
+        .number = {'1', '1', '1', '1', '\0'}
+        };
     *list = vova;
     *size += 1;
     list++;
@@ -198,15 +170,19 @@ void demo_fill(Card* list, size_t *size) {
 
 int main() {
     const char* menu;
-    menu = "Choose option:\n1. view list\n2. find person\n3. add person\n4. edit person\n5. delete person\n";
+    menu = "Choose option:\
+    \n1. view list\
+    \n2. find person\
+    \n3. add person\
+    \n4. edit person\
+    \n5. delete person\n";
     Card list[ARRSZ];
-    init_list(list);
     size_t size = 0;
     demo_fill(list, &size);
     int selector;
     Card* current;
-    while (true) {
-        printf(menu);
+    while (1) {
+        printf("%s", menu);
         scanf("%d", &selector);
         while (fgetc(stdin) != '\n') {}
         switch (selector) {
