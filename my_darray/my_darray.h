@@ -48,6 +48,11 @@ void* myda_remove(void* darray, size_t i, void(*destroy)(void*));
  * If index is out of bonds the array is left unchanged and uncopied.
  * Returns pointer to new array.
 */
-
+void* myda_erase(void* darray, void* item, void(destroy)(void*));
+/*
+ * Removes element at pointer ITEM using DESTROY if it is not NULL.
+ * If ITEM out of bonds or not aligned the array is left unchanged and uncopied.
+ * Returns pointer to new array.
+*/
 #endif
 
